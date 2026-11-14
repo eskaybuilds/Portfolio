@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Dark is the default. The header toggle sets data-theme="light" on <html>. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: #161616;
+  --line: #2a2a2a;
+  --fg: #ededed;
+  --muted: #a3a3a3;
+  --accent: #3b82f6;
+  --on-accent: #0a0a0a;
+  --link: #60a5fa;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fafaf9;
+  --surface: #f0efed;
+  --line: #d6d3d1;
+  --fg: #171717;
+  --muted: #525252;
+  --accent: #1d4ed8;
+  --on-accent: #ffffff;
+  --link: #1d4ed8;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-foreground: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-link: var(--link);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  scroll-padding-top: 2rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+}
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Case-study and blog prose follow the theme tokens. */
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-links: var(--link);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: var(--line);
+  --tw-prose-code: var(--fg);
+}

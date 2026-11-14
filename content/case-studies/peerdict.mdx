@@ -1,0 +1,40 @@
+export const meta = {
+  company: "Peerdict",
+  title: "ledger and payments backend for a sports-prediction MVP",
+  summary:
+    "As the sole backend engineer, I designed and built a ledger-backed accounting system, payment reconciliation and asynchronous pool settlement, and took the backend from MVP to prelaunch.",
+  role: "Senior Backend Engineer (contract, part-time)",
+  period: "May 2025 to Mar 2026",
+  stack: ["NestJS", "TypeScript", "PostgreSQL", "TypeORM", "Redis/Bull", "AWS"],
+  order: 1,
+};
+
+## The problem
+
+Peerdict is a peer-to-peer sports prediction platform in Nigeria. Players join a pool, stake an entry, pick match outcomes and compete against each other for the prize pool, not against the house. Every stake, payout and refund is real money moving between players, pools and bank accounts.
+
+When I joined, there was no backend at all.
+
+## My role
+
+I was the sole backend engineer, working directly with the founder. I owned the backend architecture: identity and verification, sports data ingestion, prediction markets, pools, wallets, payments, settlements and notifications.
+
+## What I built
+
+- A ledger-backed accounting system, designed and built from scratch, covering deposits, withdrawals, pool escrow, payouts, refunds and transaction history.
+- Payment processing and reconciliation: webhook validation, duplicate-event handling, amount-mismatch flagging, and checks across wallet, bank and pool-escrow balances.
+- Asynchronous scoring and pool settlement, using chunked processing, database transactions and Redis idempotency safeguards.
+
+## Decisions and trade-offs
+
+**A double-entry ledger, not a balance on each wallet.** The simple option was to store a static balance per wallet. I considered it and rejected it. A betting platform moves money constantly, and with that much movement static balances would have been a disaster. I used standard double-entry accounting instead, so every movement of money is recorded as ledger entries.
+
+**Duplicate webhooks are resolved without a person.** A payment provider can send the same event more than once. The system reconciles duplicates automatically, and flags an amount mismatch instead of guessing. For reliability I used the outbox pattern: events are written to an outbox, and a job drains it.
+
+**Settlement is a pipeline, not one big job.** Settling pools means scoring and paying out many entries. Because of the volume, and the risk of overloading the system, I built settlement as an asynchronous pipeline that works in chunks, with database transactions and Redis idempotency safeguards.
+
+**Polling for match data.** The sports data provider we settled on had to be polled. It did not push live match events. The cost was that I had to be meticulous about when and how often the backend called the provider's API, so that every event stayed in sync.
+
+## Outcome
+
+I took the backend from MVP to prelaunch. Peerdict is now live at [peerdict.com](https://peerdict.com).

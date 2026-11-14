@@ -1,0 +1,41 @@
+export const meta = {
+  company: "Kargoplex",
+  title: "logistics apps with offline sync and safe payments",
+  summary:
+    "I built shipment tracking, booking and payments across the Shipper and Forwarder apps, with offline caching and synchronisation and idempotency safeguards against duplicate transactions.",
+  role: "Mobile Engineer (full-time)",
+  period: "Mar 2025 to Jun 2026",
+  stack: ["React Native", "TanStack Query", "React Hook Form", "Yup", "Google Maps", "Firebase"],
+  order: 2,
+};
+
+## The problem
+
+Kargoplex is a freight platform. Shippers request and book shipments, and freight forwarders, who are Kargoplex's clients, provide the shipping services. Each side has its own mobile app: the Shipper app and the Forwarder app.
+
+That meant two apps to keep consistent, both handling payments, and both expected to keep working when the connection drops.
+
+## My role
+
+I was the only engineer on the mobile team. I worked across both apps, which are bare React Native, and I submitted and released both to the app stores.
+
+## What I built
+
+- Shipment tracking, booking and status updates, using Google Maps and location APIs, across both apps.
+- Payment gateway integration with idempotency safeguards against duplicate transactions.
+- Offline caching and synchronisation with TanStack Query, Firebase push notifications, and deep links.
+- Reusable adapter-based components, and complex forms with React Hook Form and Yup.
+
+## Decisions and trade-offs
+
+**Shipment updates work offline.** A user can update a shipment with no connection. The change is kept on the device and synced when the connection comes back.
+
+**TanStack Query for server state.** I introduced TanStack Query to the apps after seeing how well it handles API state. It also gave me the caching that the offline behaviour is built on.
+
+**The app creates the idempotency key.** The failures I was guarding against were double taps and retries. The app generates an idempotency key for each payment, so a second tap or a retry carries the same key and cannot become a second transaction.
+
+**Adapters between shared logic and native components.** I separated the reusable component logic from the native components underneath it. Switching a library or a provider then meant changing one place, not hundreds of lines across two apps. It also kept components standard across the Shipper and Forwarder apps.
+
+## Outcome
+
+Both apps were submitted and released to the app stores.

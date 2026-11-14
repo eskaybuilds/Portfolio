@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+# Builds the static site and publishes out/ to the eskaybuilds.github.io repo,
+# which GitHub serves at https://eskaybuilds.github.io.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: Publish out/ to eskaybuilds.github.io
+        env:
+          # Deploy key with write access to the eskaybuilds.github.io repo only.
+          DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          cd out
+          touch .nojekyll # stop GitHub Pages from ignoring the _next folder
+          git init -q -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_SHA}"
+          # The hosting repo only ever holds the latest build, so each deploy replaces it.
+          git push -f git@github.com:eskaybuilds/eskaybuilds.github.io.git main

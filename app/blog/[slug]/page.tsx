@@ -5,7 +5,9 @@ import { formatDate, getPost, getPosts } from "@/lib/blog";
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return (await getPosts()).map(({ slug }) => ({ slug }));
+  const posts = await getPosts();
+  // A static export needs at least one page here, so the unlinked draft template stands in until a post exists.
+  return posts.length > 0 ? posts.map(({ slug }) => ({ slug })) : [{ slug: "example" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
@@ -14,6 +16,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
   return {
     title: meta.title,
     description: meta.summary,
+    robots: meta.draft ? { index: false } : undefined,
     alternates: { canonical: `/blog/${slug}` },
     openGraph: {
       type: "article",
@@ -21,7 +24,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
       title: meta.title,
       description: meta.summary,
       publishedTime: meta.date,
-      images: "/opengraph-image",
+      images: "/opengraph-image.png",
     },
   };
 }

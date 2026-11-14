@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     description: meta.summary,
     alternates: { canonical: `/work/${slug}` },
     // Setting openGraph here drops the inherited image, so name it again.
-    openGraph: { type: "article", url: `/work/${slug}`, title, description: meta.summary, images: "/opengraph-image" },
+    openGraph: { type: "article", url: `/work/${slug}`, title, description: meta.summary, images: "/opengraph-image.png" },
   };
 }
 

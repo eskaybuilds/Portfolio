@@ -6,7 +6,7 @@ export type PostMeta = {
   title: string;
   summary: string;
   date: string; // ISO, e.g. "2027-01-31"
-  draft?: boolean; // drafts are never listed or built
+  draft?: boolean; // drafts are never listed
 };
 
 const dir = join(process.cwd(), "content/blog");

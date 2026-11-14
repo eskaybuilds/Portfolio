@@ -1,7 +1,7 @@
 // Every fact on the site outside the case studies lives here. Keep it in step with the CV.
 
 export const site = {
-  url: "https://eskaybuilds.vercel.app",
+  url: "https://eskaybuilds.github.io",
   name: "Sikiru Razak",
   location: "", // shown above the name when set, e.g. "City, Country"
   title: "Senior Mobile Engineer (React Native), fintech",

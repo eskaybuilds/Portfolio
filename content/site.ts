@@ -3,12 +3,11 @@
 export const site = {
   url: "https://eskaybuilds.github.io",
   name: "Sikiru Razak",
-  location: "", // shown above the name when set, e.g. "City, Country"
+  location: "Lagos, Nigeria",
   title: "Senior Mobile Engineer (React Native), fintech",
   positioning:
     "I build React Native apps for fintech products, and I know how money moves: I designed and built a ledger and payment reconciliation backend end to end.",
   email: "sikirurazak1@gmail.com",
-  cv: "/sikiru-razak-cv.pdf",
   links: [
     { label: "GitHub", href: "https://github.com/eskaybuilds" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/sikiru-razak/" },

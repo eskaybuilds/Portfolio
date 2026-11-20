@@ -3,6 +3,7 @@ import { Inter, Newsreader } from "next/font/google";
 import Link from "next/link";
 import { projects, site } from "@/content/site";
 import { getPosts } from "@/lib/blog";
+import { SiteMenu } from "./site-menu";
 import { ThemeToggle } from "./theme-toggle";
 import "./globals.css";
 
@@ -33,12 +34,12 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const nav = [
-    { label: "Work", href: "/#work" },
-    { label: "Experience", href: "/#experience" },
-    ...(projects.length > 0 ? [{ label: "Projects", href: "/#projects" }] : []),
-    { label: "Skills", href: "/#skills" },
+    { label: "Home", href: "/" },
+    { label: "Work", href: "/work" },
+    ...(projects.length > 0 ? [{ label: "Projects", href: "/projects" }] : []),
     // The blog is linked only once content/blog has a published post.
     ...((await getPosts()).length > 0 ? [{ label: "Blog", href: "/blog" }] : []),
+    { label: "About", href: "/about" },
     { label: "Contact", href: "/#contact" },
   ];
 
@@ -56,22 +57,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <header className="border-b border-line">
-          <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-4">
+          <div className="mx-auto flex max-w-3xl items-center justify-between gap-6 px-5 py-4">
             <Link href="/" className="font-serif text-lg">
               {site.name}
             </Link>
-            <nav aria-label="Main" className="flex items-center gap-4">
-              <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
-                {nav.map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className="py-2 hover:text-foreground">
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex items-center gap-1">
               <ThemeToggle />
-            </nav>
+              <SiteMenu
+                name={site.name}
+                index={nav}
+                links={[{ label: "Email", href: `mailto:${site.email}` }, ...site.links]}
+                tagline={site.title}
+                location={site.location}
+              />
+            </div>
           </div>
         </header>
         <main id="main" className="mx-auto max-w-3xl px-5">

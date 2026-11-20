@@ -1,52 +1,12 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import type { ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { experience, projects, site, skills } from "@/content/site";
 import { formatDate, getPosts } from "@/lib/blog";
 import { getCaseStudies } from "@/lib/case-studies";
-
-const button = "inline-flex min-h-11 items-center rounded-md border px-5 text-sm font-semibold";
-const mono = "font-mono text-xs uppercase tracking-widest text-muted";
-const row = "grid gap-x-8 gap-y-2 border-t border-line py-6 sm:grid-cols-[11rem_1fr]";
-const link = "text-link hover:underline";
-
-type SectionProps = {
-  id: string;
-  title: string;
-  blurb: string;
-  more?: { label: string; href: string };
-  body: ReactNode;
-};
-
-function Section({ n, id, title, blurb, more, body }: SectionProps & { n?: number }) {
-  return (
-    <section id={id} aria-labelledby={`${id}-heading`} className="border-t border-line py-14">
-      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-        <div>
-          {n && <p className={mono}>{String(n).padStart(2, "0")}</p>}
-          <h2 id={`${id}-heading`} className="mt-2 text-3xl">
-            {title}
-          </h2>
-          <p className="mt-2 text-muted">{blurb}</p>
-        </div>
-        {more && (
-          <Link href={more.href} className={`${link} py-1 text-sm`}>
-            {more.label} →
-          </Link>
-        )}
-      </div>
-      <div className="mt-8">{body}</div>
-    </section>
-  );
-}
+import { button, CaseStudyList, link, mono, ProjectList, row, Section, type SectionProps } from "./section";
 
 export default async function Home() {
   const caseStudies = await getCaseStudies();
   const posts = (await getPosts()).slice(0, 3);
-  // The portrait is optional: it appears once public/portrait.jpg exists.
-  const hasPortrait = existsSync(join(process.cwd(), "public/portrait.jpg"));
 
   // Projects and Blog drop out while empty; numbering follows what is left.
   const sections: (SectionProps | false)[] = [
@@ -54,28 +14,7 @@ export default async function Home() {
       id: "work",
       title: "Selected work",
       blurb: "Case studies: what I built, and the decisions behind it.",
-      body: (
-        <ul>
-          {caseStudies.map(({ slug, meta }) => (
-            <li key={slug} className={row}>
-              <p className={mono}>
-                {meta.period}
-                <span className="mt-1 block normal-case tracking-normal">{meta.role}</span>
-              </p>
-              <div>
-                <h3 className="text-xl">
-                  {meta.company}: {meta.title}
-                </h3>
-                <p className="mt-2 leading-relaxed text-muted">{meta.summary}</p>
-                <p className="mt-3 font-mono text-xs text-muted">{meta.stack.join(" · ")}</p>
-                <Link href={`/work/${slug}`} className={`${link} mt-4 inline-block py-1 font-semibold`}>
-                  Read the case study<span className="sr-only">: {meta.company}</span> →
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ),
+      body: <CaseStudyList items={caseStudies} />,
     },
     {
       id: "experience",
@@ -104,28 +43,12 @@ export default async function Home() {
       id: "projects",
       title: "Projects",
       blurb: "Side projects and open-source work.",
-      body: (
-        <ul>
-          {projects.map((project) => (
-            <li key={project.href} className={row}>
-              <p className={mono}>{project.tags.join(" · ")}</p>
-              <div>
-                <h3 className="text-lg">
-                  <a href={project.href} rel="noopener" className="hover:text-link hover:underline">
-                    {project.name}
-                  </a>
-                </h3>
-                <p className="mt-2 leading-relaxed text-muted">{project.line}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ),
+      body: <ProjectList />,
     },
     {
       id: "skills",
       title: "Skills",
-      blurb: "Grouped as on my CV, mobile first.",
+      blurb: "Grouped by area, mobile first.",
       body: (
         <dl>
           {skills.map(({ group, items }) => (
@@ -167,16 +90,6 @@ export default async function Home() {
   return (
     <>
       <section className="py-16 sm:py-24">
-        {hasPortrait && (
-          <Image
-            src="/portrait.jpg"
-            alt="Portrait of Sikiru Razak"
-            width={112}
-            height={112}
-            priority
-            className="mb-8 size-28 rounded-full object-cover"
-          />
-        )}
         {site.location && <p className={`${mono} mb-5`}>{site.location}</p>}
         <h1 className="text-5xl tracking-tight sm:text-6xl">{site.name}</h1>
         <p className="mt-5 text-xl text-link sm:text-2xl">{site.title}</p>
@@ -185,9 +98,6 @@ export default async function Home() {
           <Link href="#work" className={`${button} border-accent bg-accent text-on-accent hover:brightness-110`}>
             View work
           </Link>
-          <a href={site.cv} download className={`${button} border-line hover:border-muted`}>
-            Download CV
-          </a>
           <a href={`mailto:${site.email}`} className={`${button} border-line hover:border-muted`}>
             Email me
           </a>
